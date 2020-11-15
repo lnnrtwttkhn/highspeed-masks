@@ -22,7 +22,6 @@ numpy==1.18.0
 packaging==20.0
 pandas==0.25.3
 patsy==0.5.1
-pkg-resources==0.0.0
 prov==1.5.3
 pybids==0.10.0
 pydot==1.4.1
