@@ -4,5 +4,5 @@
 	datalad-id = 94ae2510-f811-11ea-a3da-00e04c10078d
 [submodule "fmriprep"]
 	path = fmriprep
-	url = /home/mpib/wittkuhn/highspeed/highspeed-masks/../highspeed-fmriprep
+	url = ../highspeed-fmriprep
 	datalad-id = 5d3f9086-f9a2-11ea-ab15-acde48001122
