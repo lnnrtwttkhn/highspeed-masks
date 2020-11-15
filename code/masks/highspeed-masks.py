@@ -47,35 +47,32 @@ warnings.filterwarnings("ignore", message="numpy.ufunc size changed*")
 job_template = """
 #PBS -l walltime=5:00:00
 #PBS -j oe
-#PBS -o /home/mpib/wittkuhn/highspeed/logs/masks
+#PBS -o /home/mpib/wittkuhn/highspeed/highspeed-masks/logs
 #PBS -m n
 #PBS -v FSLOUTPUTTYPE=NIFTI_GZ
 source /etc/bash_completion.d/virtualenvwrapper
-workon glm
+workon highspeed-masks
 module load fsl/5.0
 module load freesurfer/6.0.0
 """
 # ======================================================================
 # DEFINE PATHS AND SUBJECTS
 # ======================================================================
-# define paths depending on the operating system (OS) platform:
 path_root = None
 sub_list = None
-if 'darwin' in sys.platform:
-    path_root = opj('/Users', 'wittkuhn', 'Volumes', 'tardis', 'highspeed')
-    sub_list = ['sub-01']
-elif 'linux' in sys.platform:
-    path_root = opj('/home', 'mpib', 'wittkuhn', 'highspeed')
-    # grab the list of subjects from the bids data set:
-    layout = BIDSLayout(opj(path_root, 'bids'))
-    # get all subject ids:
-    sub_list = sorted(layout.get_subjects())
-    # create a template to add the "sub-" prefix to the ids
-    sub_template = ['sub-'] * len(sub_list)
-    # add the prefix to all ids:
-    sub_list = ["%s%s" % t for t in zip(sub_template, sub_list)]
-    # if user defined to run specific subject
-    sub_list = sub_list[int(sys.argv[1]):int(sys.argv[2])]
+# path to the project root:
+project_name = 'highspeed-masks'
+path_root = os.getcwd().split(project_name)[0] + project_name
+# grab the list of subjects from the bids data set:
+layout = BIDSLayout(opj(path_root, 'bids'))
+# get all subject ids:
+sub_list = sorted(layout.get_subjects())
+# create a template to add the "sub-" prefix to the ids
+sub_template = ['sub-'] * len(sub_list)
+# add the prefix to all ids:
+sub_list = ["%s%s" % t for t in zip(sub_template, sub_list)]
+# if user defined to run specific subject
+sub_list = sub_list[int(sys.argv[1]):int(sys.argv[2])]
 # ======================================================================
 # DEFINE NODE: INFOSOURCE
 # ======================================================================
@@ -89,11 +86,11 @@ infosource.iterables = [('subject_id', sub_list)]
 # ======================================================================
 # define all relevant files paths:
 templates = dict(
-    func=opj(path_root, 'derivatives', 'fmriprep', '{subject_id}', '*',
+    func=opj(path_root, 'fmriprep', '{subject_id}', '*',
              'func', '*space-T1w*preproc_bold.nii.gz'),
-    func_parc=opj(path_root, 'derivatives', 'fmriprep', '{subject_id}',
+    func_parc=opj(path_root, 'fmriprep', '{subject_id}',
                   '*', 'func', '*space-T1w*aparcaseg_dseg.nii.gz'),
-    wholemask=opj(path_root, 'derivatives', 'fmriprep', '{subject_id}',
+    wholemask=opj(path_root, 'fmriprep', '{subject_id}',
                   '*', 'func', '*space-T1w*brain_mask.nii.gz'),
 )
 # define the selectfiles node:
