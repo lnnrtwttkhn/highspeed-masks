@@ -29,6 +29,7 @@ from bids.layout import BIDSLayout
 from nipype.interfaces.freesurfer import Binarize
 # import fsl interfaces:
 from niflow.nipype1.workflows.fmri.fsl import create_susan_smooth
+import datalad.api as dl
 # ======================================================================
 # ENVIRONMENT SETTINGS (DEALING WITH ERRORS AND WARNINGS):
 # ======================================================================
@@ -84,6 +85,18 @@ infosource.iterables = [('subject_id', sub_list)]
 # ======================================================================
 # DEFINE SELECTFILES NODE
 # ======================================================================
+path_func = opj(
+        path_root, 'fmriprep', '*', '*',
+        'func', '*space-T1w*preproc_bold.nii.gz')
+path_func_parc = opj(
+        path_root, 'fmriprep', '*',
+        '*', 'func', '*space-T1w*aparcaseg_dseg.nii.gz')
+path_wholemask = opj(
+        path_root, 'fmriprep', '*',
+        '*', 'func', '*space-T1w*brain_mask.nii.gz')
+dl.get(path_func)
+dl.get(path_func_parc)
+dl.get(path_wholemask)
 # define all relevant files paths:
 templates = dict(
     func=opj(path_root, 'fmriprep', '{subject_id}', '*',
@@ -180,7 +193,7 @@ mask_mtl.plugin_args = {'qsub_args': '-l mem=100MB', 'overwrite': True}
 # create a node of the function:
 datasink = Node(DataSink(), name='datasink')
 # assign the path to the base directory:
-datasink.inputs.base_directory = opj(path_root, 'derivatives', 'masks')
+datasink.inputs.base_directory = opj(path_root, 'masks')
 # create a list of substitutions to adjust the filepaths of datasink:
 substitutions = [('_subject_id_', '')]
 # assign the substitutions to the datasink command:
