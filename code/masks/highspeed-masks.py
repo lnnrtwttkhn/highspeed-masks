@@ -17,6 +17,7 @@
 # import basic libraries:
 import os
 import sys
+import glob
 import warnings
 from os.path import join as opj
 # import nipype libraries:
@@ -36,7 +37,7 @@ import datalad.api as dl
 # set the fsl output type environment variable:
 os.environ['FSLOUTPUTTYPE'] = 'NIFTI_GZ'
 # set the freesurfer subject directory:
-os.environ['SUBJECTS_DIR'] = '/home/mpib/wittkuhn/tools/freesurfer/'
+os.environ['SUBJECTS_DIR'] = '/opt/software/freesurfer/6.0.0/subjects'
 # deal with nipype-related warnings:
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = "3"
 # filter out warnings related to the numpy package:
@@ -48,7 +49,7 @@ warnings.filterwarnings("ignore", message="numpy.ufunc size changed*")
 job_template = """
 #PBS -l walltime=5:00:00
 #PBS -j oe
-#PBS -o /home/mpib/wittkuhn/highspeed/highspeed-masks/logs
+#PBS -o $HOME/highspeed/highspeed-masks/logs
 #PBS -m n
 #PBS -v FSLOUTPUTTYPE=NIFTI_GZ
 source /etc/bash_completion.d/virtualenvwrapper
@@ -63,9 +64,14 @@ path_root = None
 sub_list = None
 # path to the project root:
 project_name = 'highspeed-masks'
-path_root = os.getcwd().split(project_name)[0] + project_name
+path_root = os.getenv('PWD').split(project_name)[0] + project_name
 # grab the list of subjects from the bids data set:
-layout = BIDSLayout(opj(path_root, 'bids'))
+path_bids = opj(path_root, 'bids')
+dl.get(opj('bids', 'participants.json'))
+dl.get(glob.glob(opj(path_root, 'bids', 'sub-*', 'ses-*', '*', '*.json')))
+dl.get(glob.glob(opj(path_root, 'bids', 'sub-*', 'ses-*', '*.json')))
+dl.get(glob.glob(opj(path_root, 'bids', '*.json')))
+layout = BIDSLayout(path_bids)
 # get all subject ids:
 sub_list = sorted(layout.get_subjects())
 # create a template to add the "sub-" prefix to the ids
@@ -85,25 +91,22 @@ infosource.iterables = [('subject_id', sub_list)]
 # ======================================================================
 # DEFINE SELECTFILES NODE
 # ======================================================================
-path_func = opj(
-        path_root, 'fmriprep', '*', '*',
+path_func = opj(path_root, 'fmriprep', 'fmriprep', '*', '*',
         'func', '*space-T1w*preproc_bold.nii.gz')
-path_func_parc = opj(
-        path_root, 'fmriprep', '*',
+path_func_parc = opj(path_root, 'fmriprep', 'fmriprep', '*',
         '*', 'func', '*space-T1w*aparcaseg_dseg.nii.gz')
-path_wholemask = opj(
-        path_root, 'fmriprep', '*',
+path_wholemask = opj(path_root, 'fmriprep', 'fmriprep', '*',
         '*', 'func', '*space-T1w*brain_mask.nii.gz')
-dl.get(path_func)
-dl.get(path_func_parc)
-dl.get(path_wholemask)
+dl.get(glob.glob(path_func))
+dl.get(glob.glob(path_func_parc))
+dl.get(glob.glob(path_wholemask))
 # define all relevant files paths:
 templates = dict(
-    func=opj(path_root, 'fmriprep', '{subject_id}', '*',
+    func=opj(path_root, 'fmriprep', 'fmriprep', '{subject_id}', '*',
              'func', '*space-T1w*preproc_bold.nii.gz'),
-    func_parc=opj(path_root, 'fmriprep', '{subject_id}',
+    func_parc=opj(path_root, 'fmriprep', 'fmriprep', '{subject_id}',
                   '*', 'func', '*space-T1w*aparcaseg_dseg.nii.gz'),
-    wholemask=opj(path_root, 'fmriprep', '{subject_id}',
+    wholemask=opj(path_root, 'fmriprep', 'fmriprep', '{subject_id}',
                   '*', 'func', '*space-T1w*brain_mask.nii.gz'),
 )
 # define the selectfiles node:

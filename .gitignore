@@ -5,3 +5,5 @@
 code/*/*.html
 logs
 work
+stderr.nipype
+stdout.nipype
