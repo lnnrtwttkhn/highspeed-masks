@@ -1,27 +1,3 @@
----
-title: "Faster than thought: Detecting sub-second activation sequences with sequential fMRI pattern analysis"
-subtitle: "Short project title: highspeed"
-author:
-  - Lennart Wittkuhn^[Max Planck Institute for Human Development, wittkuhn@mpib-berlin.mpg.de]
-  - Nicolas W. Schuck^[Max Planck Institute for Human Development, schuck@mpib-berlin.mpg.de]
-date: "Last update: `r format(Sys.time(), '%d %B, %Y')`"
-output:
- html_document:
-    toc: true
-    self_contained: true
-    toc_float: true
-    toc_depth: 3
-    number_sections: true
-    highlight: pygments
-    theme: cosmo
-    df_print: paged
-    fig_caption: true
-fig.align: "center"
-header-includes:
-  - \usepackage{fontspec}
-  - \setmainfont{AgfaRotisSansSerif}
-email: wittkuhn@mpib-berlin.mpg.de
----
 
 ```{r, echo=FALSE, message=FALSE, include=FALSE}
 if (!requireNamespace("pacman")) install.packages("pacman")
@@ -34,9 +10,7 @@ if (basename(here::here()) == "highspeed"){
 }
 ```
 
-# Creating binary masks
-
-### Code and software
+## Feature selection: Anatomical masks
 
 #### Creating binary masks using `highspeed-masks.py`
 
