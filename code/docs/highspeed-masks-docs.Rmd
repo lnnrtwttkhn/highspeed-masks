@@ -12,12 +12,36 @@ if (basename(here::here()) == "highspeed"){
 
 ## Feature selection: Anatomical masks
 
-#### Creating binary masks using `highspeed-masks.py`
+### Overview
+
+As described in the paper, we used a feature selection approach that combined binarized anatomical ROIs with functional ROIs based on first-level GLMs.
+
+#### Data availability
+
+The data is freely available from https://github.com/lnnrtwttkhn/highspeed-masks and https://gin.g-node.org/lnnrtwttkhn/highspeed-masks.
+
+#### License
+
+The dataset is licensed under Creative Commons Attribution-ShareAlike 4.0.
+Please see https://creativecommons.org/licenses/by-sa/4.0/ for details.
+
+### Creating binary anatomical masks using `highspeed-masks.py`
+
+We created binarized anatomical masks of occipito-temporal cortex and hippocampus based on the participant-specific Freesurfer parcellation using a Nipype workflow:
 
 ```{python, echo=TRUE, code=readLines(file.path(path_root, "code", "masks", "highspeed-masks.py")), eval=FALSE, python.reticulate=FALSE}
 ```
 
-#### Plotting masked data using `highspeed-masks-plot.py`
+### Plotting masked data using `highspeed-masks-plot.py`
+
+We generated some plots of the data using the following code:
 
 ```{python, echo=TRUE, code=readLines(file.path(path_root, "code", "masks", "highspeed-masks-plot.py")), eval=FALSE, python.reticulate=FALSE}
+```
+
+### Software: Required packages
+
+The `requirements.txt` file lists the required packages which can be installed e.g., using `pip install -r requirements.txt`
+
+```{bash, echo=TRUE, code=readLines(file.path(path_root, "requirements.txt")), eval=FALSE}
 ```
